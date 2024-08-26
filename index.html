@@ -11,20 +11,84 @@
         #output_canvas{
             z-index: 1;
             position: absolute;
-            top: 0vh;
-            left: 0vw;
-            filter: grayscale();
+            top: 25vh;
+            right: 15vw;
+            filter: grayscale() opacity(20%);
+            width: 70vw;
+            height: 70vh;
+
+            
+                
+                
+            
         }
         #genCanvas{
             position: absolute;
-            top: 0vh;
+            top: 25vh;
             left: 0vw;
             z-index: 0;
+            position: absolute;
+            left: 15vw;
+            width: 70vw;
+            height: 70vh;
+            display: block;
+             -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
 
         }
+        #title{
+                font-family: helvetica;
+                font-weight: bold;
+                position: absolute;
+                left:15vw;
+                text-align: center;
+            }
+            .instructions{
+                position: absolute;
+                font-weight: lighter;
+                left : 15vw;
+                top: 10vh;
+                width: 35vw;
+
+                
+            }
+            .switch{
+                position: absolute;
+                right: 15vw;
+                top: 20vh;
+            }
+            #showWebcam{
+                accent-color: black;
+            }
     </style>
 </head>
 <body>
+    <label class="switch"> Turn off webcam view
+    
+        <input id="showWebcam" type="checkbox" >
+      </label>
+    <script>
+        const mySwitch = document.getElementById('showWebcam');
+        mySwitch.addEventListener('change',(e)=>{
+            if(mySwitch.checked) document.getElementById('output_canvas').style.display='none';
+            else document.getElementById('output_canvas').style.display='block';
+        })
+
+    </script>
+    <h1 id="title">Particles X Mediapipe</h1>
+    <div class="instructions" >
+
+        <p> The center of attraction is between your index and thumb. </p>
+        
+        <p><strong>SPACE</strong> your index and thub to increase the attraction</p>
+        <p><strong>PINCH</strong>  your index and thumb to release</p>
+        
+        
+    </div>
     <video id="input_video" autoplay></video>
     
     <canvas id="genCanvas"></canvas>
