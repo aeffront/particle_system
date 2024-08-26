@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Pose Detection with MediaPipe</title>
+    <style>
+        #input_video{
+            display: none;
+        }
+        #output_canvas{
+            z-index: 1;
+            position: absolute;
+            top: 0vh;
+            left: 0vw;
+            filter: grayscale();
+        }
+        #genCanvas{
+            position: absolute;
+            top: 0vh;
+            left: 0vw;
+            z-index: 0;
+
+        }
+    </style>
+</head>
+<body>
+    <video id="input_video" autoplay></video>
+    
+    <canvas id="genCanvas"></canvas>
+    <canvas id="output_canvas"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+    
+    <script>
+        const videoElement = document.getElementById('input_video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        
+
+        canvasElement.width=window.innerWidth*0.2;
+        canvasElement.height=window.innerHeight*0.23;
+
+        const hands = new Hands({
+            locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+            }
+        });
+
+        hands.setOptions({
+            maxNumHands: 2,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        hands.onResults(onResults);
+
+        let MPresults;
+
+        function onResults(results) {
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.scale(-1, 1);  // Flip horizontally
+            canvasCtx.translate(-canvasElement.width, 0); 
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+            if (results.multiHandLandmarks) {
+
+                MPresults = results.multiHandLandmarks;
+                
+                
+                
+
+                //update();
+
+                for (const landmarks of results.multiHandLandmarks) {
+
+                    
+                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 0.3});
+                    drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 0.2});
+                }
+                
+            }
+            canvasCtx.restore();
+        }
+
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({image: videoElement});
+            },
+            width: 640,
+            height: 480
+        });
+        camera.start();
+    </script>
+    <script src="index.js"></script>
+</body>
+</html>
